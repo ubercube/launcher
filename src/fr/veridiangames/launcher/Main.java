@@ -31,6 +31,8 @@ public class Main extends Application {
     private String jarPath;
     private String os;
 
+    private Console console;
+
     @Override
     public void start(Stage primaryStage) throws Exception
     {
@@ -216,7 +218,9 @@ public class Main extends Application {
             try {
                 String term = "";
 
-                switch (OsChecker.check())
+                this.console = new Console(portField.getText());
+
+                /*switch (OsChecker.check())
                 {
                     case OsChecker.WINDOWS:
                         term = "cmd.exe";
@@ -232,10 +236,12 @@ public class Main extends Application {
                 }
 
                 Runtime.getRuntime().exec(term + " -e java -cp ubercube.jar fr.veridiangames.server.ServerMain " +
-                        portField.getText(),null, new File("game/" + os));
+                        portField.getText(),null, new File("game/" + os));*/
 
-                this.stop();
-                System.exit(0);
+                modal.close();
+                console.show();
+                //this.stop();
+                //System.exit(0);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -250,6 +256,14 @@ public class Main extends Application {
         rootModal.getChildren().add(btn);
 
         return modal;
+    }
+
+    @Override
+    public void stop() throws Exception
+    {
+        super.stop();
+        if(console != null && console.getProcess() != null && console.getProcess().isAlive())
+            console.getProcess().destroy();
     }
 
     public static void main(String[] args)
