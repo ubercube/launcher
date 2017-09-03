@@ -111,4 +111,15 @@ public class Utils
             for (File f: files) deleteFolder(f);
         dir.delete();
     }
+
+    public static String cropText(String text, int max)
+    {
+        if(text.length() > max)
+        {
+            text = text.substring(text.length() - max, text.length());
+            text = text.substring(text.indexOf("\n") + 1, text.length());
+        }
+
+        return text;
+    }
 }

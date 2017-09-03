@@ -27,17 +27,21 @@ import java.util.Random;
 public class Main extends Application {
 
     public final static String DEFAULT_URL = "http://91.134.107.165";
-    public final static String GAME_FOLDER = "game/";
+    public final static String GAME_FOLDER = "../data/";
 
     private String jarPath;
     private String os;
 
     private Console console;
 
+    private Stage primaryStage;
+
     @Override
     public void start(Stage primaryStage) throws Exception
     {
         this.setup();
+
+        this.primaryStage = primaryStage;
 
         primaryStage.getIcons().add(new Image(new FileInputStream(new File("icon.png"))));
 
@@ -221,6 +225,7 @@ public class Main extends Application {
 
                 this.console = new Console(portField.getText());
 
+                this.primaryStage.close();
                 modal.close();
                 console.show();
             } catch (Exception e) {
@@ -237,14 +242,6 @@ public class Main extends Application {
         rootModal.getChildren().add(btn);
 
         return modal;
-    }
-
-    @Override
-    public void stop() throws Exception
-    {
-        super.stop();
-        if(console != null && console.getProcess() != null && console.getProcess().isAlive())
-            console.getProcess().destroy();
     }
 
     public static void main(String[] args)

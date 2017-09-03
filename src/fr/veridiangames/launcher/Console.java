@@ -1,5 +1,7 @@
 package fr.veridiangames.launcher;
 
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
@@ -10,11 +12,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
+import java.awt.*;
 import java.io.*;
 
 public class Console extends Stage implements Runnable
 {
+    public static final int MAX_CONSOLE_SIZE = 500;
+
     private String port;
     private Process process;
 
@@ -27,6 +33,8 @@ public class Console extends Stage implements Runnable
     private BufferedWriter writer;
     private BufferedReader reader;
 
+    private boolean processAlive;
+
     public Console(String port)
     {
         this.port = port;
@@ -35,9 +43,13 @@ public class Console extends Stage implements Runnable
         {
             this.process = Runtime.getRuntime().exec("java -cp ubercube.jar fr.veridiangames.server.ServerMain " +
                     port,null, new File(Main.GAME_FOLDER + OsChecker.getOsName()));
+
+            this.processAlive = true;
+
             this.writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
             this.reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
         }
@@ -72,8 +84,9 @@ public class Console extends Stage implements Runnable
             try
             {
                 String command = this.field.getText();
+                String text = this.area.getText();
 
-                this.area.setText(this.area.getText() + "\n" + command);
+                System.out.println("> " + command);
 
                 if(this.writer != null)
                 {
@@ -84,10 +97,7 @@ public class Console extends Stage implements Runnable
                 this.field.setText("");
 
                 if(command.equalsIgnoreCase("stop"))
-                {
-                    this.thread.join();
                     this.close();
-                }
             }
             catch (Exception e)
             {
@@ -95,8 +105,40 @@ public class Console extends Stage implements Runnable
             }
         });
 
+        System.setOut(new PrintStream(new GraphicsOutputStream(this.area, this.scrollPane)));
+
         this.thread = new Thread(this);
         this.thread.start();
+
+        setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                close();
+            }
+        });
+    }
+
+    @Override
+    public void close()
+    {
+        super.close();
+        if(this.process != null)
+            this.process.destroy();
+        this.processAlive = false;
+    }
+
+    @Override
+    public void run()
+    {
+        while (processAlive)
+            try
+            {
+                if(this.reader != null)
+                    System.out.println(this.reader.readLine());
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
     }
 
     public Process getProcess()
@@ -104,19 +146,8 @@ public class Console extends Stage implements Runnable
         return process;
     }
 
-    @Override
-    public void run()
+    public Thread getThread()
     {
-        while (process.isAlive())
-            try
-            {
-                String line = this.reader.readLine();
-                this.area.setText(this.area.getText() + "\n" + line);
-                this.scrollPane.setVvalue(1.0d);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+        return thread;
     }
 }
