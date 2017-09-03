@@ -34,7 +34,7 @@ public class Console extends Stage implements Runnable
         try
         {
             this.process = Runtime.getRuntime().exec("java -cp ubercube.jar fr.veridiangames.server.ServerMain " +
-                    port,null, new File("game/" + OsChecker.getOsName()));
+                    port,null, new File(Main.GAME_FOLDER + OsChecker.getOsName()));
             this.writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
             this.reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         } catch (IOException e)

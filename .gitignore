@@ -17,8 +17,11 @@ hs_err_pid*
 out/
 out/*
 
-META-INF\
-META-INF\*
+META-INF/
+META-INF/*
+
+game/
+game/*
 
 log.txt
 .version

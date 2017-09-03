@@ -26,7 +26,8 @@ import java.util.Random;
 
 public class Main extends Application {
 
-    private final static String DEFAULT_URL = "http://91.134.107.165";
+    public final static String DEFAULT_URL = "http://91.134.107.165";
+    public final static String GAME_FOLDER = "game/";
 
     private String jarPath;
     private String os;
@@ -39,7 +40,7 @@ public class Main extends Application {
         this.setup();
 
         primaryStage.getIcons().add(new Image(new FileInputStream(new File("icon.png"))));
-        //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+
         StackPane root = new StackPane();
         primaryStage.setTitle("Ubercube Pre Alpha 1.1");
         primaryStage.setScene(new Scene(root, 800, 600));
@@ -76,7 +77,7 @@ public class Main extends Application {
             body.close();
 
             /* Check Version */
-            File versionFile = new File("game/" + os + "/.version");
+            File versionFile = new File(GAME_FOLDER + os + "/.version");
             if(versionFile.exists())
             {
                 BufferedReader versionReader = new BufferedReader(new FileReader(versionFile));
@@ -88,16 +89,16 @@ public class Main extends Application {
             {
                 Utils.download(DEFAULT_URL + "/" + dlUrl, dlUrl);
 
-                File gameDir = new File("game");
+                File gameDir = new File(GAME_FOLDER);
 
                 if (gameDir.exists())
                     Utils.deleteFolder(gameDir);
                 gameDir.mkdir();
 
-                Utils.unzip(dlUrl, dlUrl, "game");
+                Utils.unzip(dlUrl, dlUrl, GAME_FOLDER);
             }
 
-            jarPath = "game/" + gamePath;
+            jarPath = GAME_FOLDER + gamePath;
         }
         catch (IOException e)
         {
@@ -170,7 +171,7 @@ public class Main extends Application {
             Runtime runtime = Runtime.getRuntime();
             try {
                 runtime.exec("java -cp ubercube.jar fr.veridiangames.client.MainComponent " +
-                                hostField.getText() + " " + usernameField.getText(),null, new File("game/" + os));
+                                hostField.getText() + " " + usernameField.getText(),null, new File(GAME_FOLDER + os));
                 this.stop();
                 System.exit(0);
             } catch (Exception e) {
@@ -220,28 +221,8 @@ public class Main extends Application {
 
                 this.console = new Console(portField.getText());
 
-                /*switch (OsChecker.check())
-                {
-                    case OsChecker.WINDOWS:
-                        term = "cmd.exe";
-                        break;
-                    case OsChecker.LINUX:
-                        term = "x-terminal-emulator";
-                        break;
-                    case OsChecker.MAC:
-                        term = "iTerm2";
-                        break;
-                    default:
-                        System.err.println("Unknown OS");
-                }
-
-                Runtime.getRuntime().exec(term + " -e java -cp ubercube.jar fr.veridiangames.server.ServerMain " +
-                        portField.getText(),null, new File("game/" + os));*/
-
                 modal.close();
                 console.show();
-                //this.stop();
-                //System.exit(0);
             } catch (Exception e) {
                 e.printStackTrace();
             }
