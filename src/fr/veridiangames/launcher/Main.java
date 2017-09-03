@@ -28,13 +28,13 @@ public class Main extends Application {
 
     public final static String DEFAULT_URL = "http://91.134.107.165";
     public final static String GAME_FOLDER = "../data/";
+    public final static String CHANGELOG = "https://ubercube.github.io/update.html";
 
     private String jarPath;
     private String os;
 
-    private Console console;
-
     private Stage primaryStage;
+    private Console console;
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -46,7 +46,7 @@ public class Main extends Application {
         primaryStage.getIcons().add(new Image(new FileInputStream(new File("icon.png"))));
 
         StackPane root = new StackPane();
-        primaryStage.setTitle("Ubercube Pre Alpha 1.1");
+        primaryStage.setTitle("Ubercube Launcher v1");
         primaryStage.setScene(new Scene(root, 800, 600));
 
         BorderPane border = new BorderPane();
@@ -119,6 +119,14 @@ public class Main extends Application {
 
         Insets padding = new Insets( 10, 30, 10, 30);
 
+        Button publicButton = new Button("Public Server");
+        publicButton.setPadding(padding);
+        publicButton.setOnAction(event -> {
+            Stage modal = createPublicConnectionModal(((Node) event.getSource()).getScene().getWindow());
+            modal.show();
+        });
+        menu.getChildren().add(publicButton);
+
         Button clientButton = new Button("Launch Client");
         clientButton.setPadding(padding);
         clientButton.setOnAction(event -> {
@@ -142,7 +150,7 @@ public class Main extends Application {
     {
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
-        webEngine.load("https://marccspro.itch.io/ubercube");
+        webEngine.load(CHANGELOG);
 
         return webView;
     }
@@ -192,6 +200,49 @@ public class Main extends Application {
         rootModal.getChildren().add(hostLabel);
         GridPane.setConstraints(hostField, 1, 1);
         rootModal.getChildren().add(hostField);
+
+        GridPane.setConstraints(btn, 0, 2);
+        rootModal.getChildren().add(btn);
+
+        return modal;
+    }
+
+    private Stage createPublicConnectionModal(Window window)
+    {
+        Stage modal = new Stage();
+        GridPane rootModal = new GridPane();
+        rootModal.setPadding(new Insets(10));
+        rootModal.setVgap(5);
+        rootModal.setHgap(5);
+
+        modal.setScene(new Scene(rootModal, 300, 200));
+        modal.setTitle("Configuration :");
+        modal.initModality(Modality.WINDOW_MODAL);
+        modal.initOwner(window);
+        modal.setX(window.getX() + window.getWidth() / 2 - 150);
+        modal.setY(window.getY() + window.getHeight() / 2 - 100);
+
+        Label usernameLabel = new Label("Username :");
+        TextField usernameField = new TextField();
+        usernameField.setText("Random_" + new Random().nextInt(999));
+
+        Button btn = new Button("Launch");
+        btn.setOnAction(event -> {
+            Runtime runtime = Runtime.getRuntime();
+            try {
+                runtime.exec("java -cp ubercube.jar fr.veridiangames.client.MainComponent 91.134.107.165:4242 " +
+                        usernameField.getText(),null, new File(GAME_FOLDER + os));
+                this.stop();
+                System.exit(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        GridPane.setConstraints(usernameLabel, 0, 0);
+        rootModal.getChildren().add(usernameLabel);
+        GridPane.setConstraints(usernameField, 1, 0);
+        rootModal.getChildren().add(usernameField);
 
         GridPane.setConstraints(btn, 0, 2);
         rootModal.getChildren().add(btn);
