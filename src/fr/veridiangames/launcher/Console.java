@@ -41,8 +41,11 @@ public class Console extends Stage implements Runnable
 
         try
         {
-            this.process = Runtime.getRuntime().exec("java -cp ubercube.jar fr.veridiangames.server.ServerMain " +
-                    port,null, new File(Main.GAME_FOLDER + OsChecker.getOsName()));
+            String cmd = "java -cp ubercube.jar fr.veridiangames.server.ServerMain " + port;
+
+            System.out.println("Exec : " + cmd);
+
+            this.process = Runtime.getRuntime().exec(cmd,null, new File(Main.GAME_FOLDER + OsChecker.getOsName()));
 
             this.processAlive = true;
 

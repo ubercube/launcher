@@ -32,6 +32,9 @@ public class Main extends Application {
 
     private String jarPath;
     private String os;
+    private int osId;
+
+    private String macosFlags;
 
     private Stage primaryStage;
     private Console console;
@@ -60,7 +63,10 @@ public class Main extends Application {
 
     private void setup ()
     {
-        os = OsChecker.getOsName();
+        this.osId = OsChecker.getOsId();
+        this.os = OsChecker.getOsName();
+
+        this.macosFlags = (this.osId == OsChecker.MACOS) ? "-XstartOnFirstThread " : "";
 
         String review = "";
         String currentReview = "";
@@ -182,8 +188,11 @@ public class Main extends Application {
         btn.setOnAction(event -> {
             Runtime runtime = Runtime.getRuntime();
             try {
-                runtime.exec("java -cp ubercube.jar fr.veridiangames.client.MainComponent " +
-                                hostField.getText() + " " + usernameField.getText(),null, new File(GAME_FOLDER + os));
+                String cmd = "java " + this.macosFlags + "-cp ubercube.jar fr.veridiangames.client.MainComponent " + hostField.getText() + " " + usernameField.getText();
+
+                System.out.println("Exec : " + cmd);
+
+                runtime.exec(cmd,null, new File(GAME_FOLDER + os));
                 this.stop();
                 System.exit(0);
             } catch (Exception e) {
@@ -230,8 +239,9 @@ public class Main extends Application {
         btn.setOnAction(event -> {
             Runtime runtime = Runtime.getRuntime();
             try {
-                runtime.exec("java -cp ubercube.jar fr.veridiangames.client.MainComponent 91.134.107.165:4242 " +
-                        usernameField.getText(),null, new File(GAME_FOLDER + os));
+                String cmd = "java " + this.macosFlags + "-cp ubercube.jar fr.veridiangames.client.MainComponent 91.134.107.165:4242 " + usernameField.getText();
+                System.out.println("Exec : " + cmd);
+                runtime.exec(cmd,null, new File(GAME_FOLDER + os));
                 this.stop();
                 System.exit(0);
             } catch (Exception e) {
