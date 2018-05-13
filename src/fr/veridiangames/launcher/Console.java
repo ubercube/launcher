@@ -45,7 +45,7 @@ public class Console extends Stage implements Runnable
 
             System.out.println("Exec : " + cmd);
 
-            this.process = Runtime.getRuntime().exec(cmd,null, new File(Main.GAME_FOLDER + OsChecker.getOsName()));
+            this.process = Runtime.getRuntime().exec(cmd,null, new File( new File("").getAbsolutePath()));
 
             this.processAlive = true;
 

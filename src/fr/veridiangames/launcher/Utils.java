@@ -9,9 +9,8 @@ import java.util.zip.ZipInputStream;
 
 public class Utils
 {
-    public static boolean unzip(String zipFilePath, String fileName, String destDirectory) {
+    public static boolean unzip(String zipFilePath, String destDirectory) {
         try {
-            System.out.println("Unziping File (" + fileName + ")");
             File destDir = new File(destDirectory);
             if (!destDir.exists()) {
                 destDir.mkdir();
@@ -30,7 +29,6 @@ public class Utils
                 zipIn.closeEntry();
                 entry = zipIn.getNextEntry();
             }
-            System.out.println("File (" + fileName + ") has been unziped !");
             zipIn.close();
             return true;
         } catch (IOException e) {
@@ -83,6 +81,7 @@ public class Utils
                     out.close();
                 }
             } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
         }
         return false;

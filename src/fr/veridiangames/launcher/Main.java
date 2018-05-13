@@ -26,16 +26,20 @@ import java.util.Random;
 
 public class Main extends Application {
 
-    public final static String DEFAULT_URL = "http://91.134.107.165";
-    public final static String GAME_FOLDER = "../data/";
-    public final static String CHANGELOG = "https://ubercube.github.io/update.html";
+    public final static String IP_SERVER = "51.15.20.92";
+    public final static String PORT_SERVER = "4242";
+    public final static String URL_SERVER = "http://" + IP_SERVER;
+    public final static String URL_SERVER_UBERCUBE = URL_SERVER + "/ubercube";
+    public final static String URL_NIGTHLY = URL_SERVER_UBERCUBE + "/build-nigthly";
+    public final static String URL_NIGTHLY_VERSION = URL_SERVER_UBERCUBE + "/ubercube-dev/version.udf";
+    public final static String URL_CHANGELOG = URL_SERVER_UBERCUBE + "/changelog.html";
 
-    private String jarPath;
+    public final static String PATH_GAME_FOLDER = new File("").getAbsolutePath();
+
     private String os;
     private int osId;
 
-    private String macosFlags;
-
+    private String macosFlags = "";
     private Stage primaryStage;
     private Console console;
 
@@ -49,7 +53,7 @@ public class Main extends Application {
         primaryStage.getIcons().add(new Image(new FileInputStream(new File("icon.png"))));
 
         StackPane root = new StackPane();
-        primaryStage.setTitle("Ubercube Launcher v1");
+        primaryStage.setTitle("Ubercube Launcher");
         primaryStage.setScene(new Scene(root, 800, 600));
 
         BorderPane border = new BorderPane();
@@ -68,47 +72,47 @@ public class Main extends Application {
 
         this.macosFlags = (this.osId == OsChecker.MACOS) ? "-XstartOnFirstThread " : "";
 
-        String review = "";
-        String currentReview = "";
-        String dlUrl = "";
-        String gamePath = "";
+        String serverVersion;
+        String localVersion;
 
         try
         {
-            /* Check URL */
-            URL url = new URL(DEFAULT_URL + "/info.udf");
+            /* GET SERVER VERSION */
+            URL url = new URL(URL_NIGTHLY_VERSION);
             URLConnection yc = url.openConnection();
 
             BufferedReader body = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-            review = body.readLine();
-            String inputLine = body.readLine();
-            dlUrl = inputLine.split(" ")[0].replace("{os}", os);
-            gamePath = inputLine.split(" ")[1].replace("{os}", os);
+            serverVersion = body.readLine();
             body.close();
 
-            /* Check Version */
-            File versionFile = new File(GAME_FOLDER + os + "/.version");
-            if(versionFile.exists())
+            /* GET LOCAL VERSION */
+            File localVersionFile = new File("version.udf");
+            if(localVersionFile.exists())
             {
-                BufferedReader versionReader = new BufferedReader(new FileReader(versionFile));
-                currentReview = versionReader.readLine();
-                versionReader.close();
+                body = new BufferedReader(new FileReader(localVersionFile));
+                localVersion = body.readLine();
+                body.close();
+            }
+            else
+            {
+                localVersionFile.createNewFile();
+                PrintWriter p = new PrintWriter(new FileWriter(localVersionFile));
+                p.println(serverVersion);
+                p.close();
+                localVersion = "0";
             }
 
-            if(!review.equalsIgnoreCase(currentReview))
+            System.out.println(localVersion + " " + serverVersion);
+
+            /* Compare Version */
+            if(!serverVersion.equals(localVersion))
             {
-                Utils.download(DEFAULT_URL + "/" + dlUrl, dlUrl);
+                String fn = new File("").getAbsolutePath() + "/ubercube-" + os + ".zip";
 
-                File gameDir = new File(GAME_FOLDER);
-
-                if (gameDir.exists())
-                    Utils.deleteFolder(gameDir);
-                gameDir.mkdir();
-
-                Utils.unzip(dlUrl, dlUrl, GAME_FOLDER);
+                Utils.download(URL_NIGTHLY + "/ubercube-" + os + ".zip", fn);
+                Utils.unzip( fn, new File("").getAbsolutePath());
+                new File(new File("").getAbsolutePath() + "/ubercube-" + os + ".zip").delete();
             }
-
-            jarPath = GAME_FOLDER + gamePath;
         }
         catch (IOException e)
         {
@@ -156,7 +160,7 @@ public class Main extends Application {
     {
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
-        webEngine.load(CHANGELOG);
+        webEngine.load(URL_CHANGELOG);
 
         return webView;
     }
@@ -192,7 +196,7 @@ public class Main extends Application {
 
                 System.out.println("Exec : " + cmd);
 
-                runtime.exec(cmd,null, new File(GAME_FOLDER + os));
+                runtime.exec(cmd,null, new File(new File("").getAbsolutePath()));
                 this.stop();
                 System.exit(0);
             } catch (Exception e) {
@@ -239,9 +243,9 @@ public class Main extends Application {
         btn.setOnAction(event -> {
             Runtime runtime = Runtime.getRuntime();
             try {
-                String cmd = "java " + this.macosFlags + "-cp ubercube.jar fr.veridiangames.client.MainComponent 91.134.107.165:4242 " + usernameField.getText();
+                String cmd = "java " + this.macosFlags + "-cp ubercube.jar fr.veridiangames.client.MainComponent " + IP_SERVER + ":" + PORT_SERVER + " " + usernameField.getText();
                 System.out.println("Exec : " + cmd);
-                runtime.exec(cmd,null, new File(GAME_FOLDER + os));
+                runtime.exec(cmd,null, new File(new File("").getAbsolutePath()));
                 this.stop();
                 System.exit(0);
             } catch (Exception e) {
