@@ -34,8 +34,6 @@ public class Main extends Application {
     public final static String URL_NIGTHLY_VERSION = URL_SERVER_UBERCUBE + "/ubercube-dev/version.udf";
     public final static String URL_CHANGELOG = URL_SERVER_UBERCUBE + "/changelog.html";
 
-    public final static String PATH_GAME_FOLDER = new File("").getAbsolutePath();
-
     private String os;
     private int osId;
 
@@ -286,7 +284,6 @@ public class Main extends Application {
         Button btn = new Button("Launch");
         btn.setOnAction(event -> {
             try {
-                String term = "";
 
                 this.console = new Console(portField.getText());
 
