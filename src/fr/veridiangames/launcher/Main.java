@@ -40,7 +40,7 @@ public class Main extends Application {
     private String macosFlags = "";
     private Stage primaryStage;
     private Console console;
-
+    
     @Override
     public void start(Stage primaryStage) throws Exception
     {
@@ -48,7 +48,7 @@ public class Main extends Application {
 
         this.primaryStage = primaryStage;
 
-        primaryStage.getIcons().add(new Image(new FileInputStream(new File("icon.png"))));
+        //primaryStage.getIcons().add(new Image(new FileInputStream(new File("icon.png"))));
 
         StackPane root = new StackPane();
         primaryStage.setTitle("Ubercube Launcher");
