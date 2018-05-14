@@ -31,7 +31,7 @@ public class Main extends Application {
     public final static String URL_SERVER = "http://" + IP_SERVER;
     public final static String URL_SERVER_UBERCUBE = URL_SERVER + "/ubercube";
     public final static String URL_NIGTHLY = URL_SERVER_UBERCUBE + "/build-nigthly";
-    public final static String URL_NIGTHLY_VERSION = URL_SERVER_UBERCUBE + "/ubercube-dev/version.udf";
+    public final static String URL_NIGTHLY_VERSION = URL_SERVER_UBERCUBE + "/ubercube-nigthly/version.udf";
     public final static String URL_CHANGELOG = URL_SERVER_UBERCUBE + "/changelog.html";
 
     private String os;
@@ -40,7 +40,7 @@ public class Main extends Application {
     private String macosFlags = "";
     private Stage primaryStage;
     private Console console;
-    
+
     @Override
     public void start(Stage primaryStage) throws Exception
     {
